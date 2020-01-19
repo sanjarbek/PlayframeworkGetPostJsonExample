@@ -19,9 +19,17 @@ case class SchoolClass(
                       isDeleted: Boolean
                       )
 
-
 object SchoolClass {
   implicit val format = Json.format[SchoolClass]
+
+  implicit val datatablesWritesFormat = new Writes[SchoolClass] {
+    def writes(schoolClass: SchoolClass) = {
+      val jsObject = Json.toJson(schoolClass).asInstanceOf[JsObject]
+      jsObject ++ Json.obj(
+        "DT_RowId" -> schoolClass.id
+      )
+    }
+  }
 
   implicit val customSchoolClassReads: Reads[SchoolClass] = (
     (JsPath \ "id").read[Int] and

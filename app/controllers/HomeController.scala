@@ -22,20 +22,7 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
    * a path of `/`.
    */
   def index = Action {
-    Ok(Json.toJson("Your new application is ready."))
-  }
-
-  def update = Action.async(BodyParsers.parse.json) { implicit request =>
-    import SchoolClass.customSchoolClassReads
-    val jsonValidation = request.body.validate[SchoolClass]
-    jsonValidation.fold(
-      errors => {
-        Future { BadRequest(Json.obj("status" -> "ParseError", "message" -> JsError.toJson(errors)))}
-      },
-      schoolClass => {
-        Future { Ok(Json.obj("status" -> "Ok", "message" -> Json.toJson(schoolClass)))}
-      }
-    )
+    Ok(views.html.index("Your new application is ready."))
   }
 
 }
