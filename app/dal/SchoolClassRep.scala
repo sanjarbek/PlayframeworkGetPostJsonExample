@@ -2,9 +2,13 @@ package dal
 
 import java.util.Date
 
+import anorm._
+import javax.inject.{Inject, Singleton}
 import models.SchoolClass
+import play.api.db._
 
-object SchoolClassRep {
+@Singleton
+class SchoolClassRep @Inject() (db: Database) {
 
   private var incId = 5
 
@@ -15,13 +19,21 @@ object SchoolClassRep {
     SchoolClass(4, 1, "D", "EN", true, 1, "hello 4", new Date(), false),
   )
 
-  def list = schoolClasses
+  val schoolClassParser = Macro.namedParser[SchoolClass]
 
-  def create(schoolClass: SchoolClass) = {
-    val newSchoolClass = schoolClass.copy(id = incId)
-    incId += 1
-    schoolClasses = newSchoolClass :: schoolClasses
-    newSchoolClass
+  def list = db.withConnection { implicit c =>
+    SQL("select * from school_classes").as(schoolClassParser *)
+  }
+
+  def create(schoolClass: SchoolClass) = db.withConnection { implicit c =>
+    val id: Option[Long] = SQL("insert into school_classes " +
+      "(grade, name, workbook_language, is_operational, for_school, ruid, last_update_time, is_deleted) values " +
+      "({grade}, {name}, {workbookLanguage}, {isOperational}, {forSchool}, {ruid}, {lastUpdateTime}, {isDeleted})")
+      .on("grade" ->schoolClass.grade, "name" -> schoolClass.name,
+        "workbookLanguage"->schoolClass.workbookLanguage, "isOperational"->schoolClass.isOperational,
+        "forSchool"->schoolClass.forSchool, "ruid" -> schoolClass.ruid,
+        "lastUpdateTime"->schoolClass.lastUpdateTime, "isDeleted"->schoolClass.isDeleted).executeInsert()
+    schoolClass.copy(id=id.get.toInt)
   }
 
   def update(schoolClass: SchoolClass) = {

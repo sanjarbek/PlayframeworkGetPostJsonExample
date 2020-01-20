@@ -17,11 +17,13 @@ import scala.concurrent.Future
  * application's home page.
  */
 @Singleton
-class SchoolClassController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class SchoolClassController @Inject()(
+                                       schoolClassRep: SchoolClassRep,
+                                       cc: ControllerComponents) extends AbstractController(cc) {
 
   def index = Action {
     import SchoolClass.datatablesWritesFormat
-    val ls = SchoolClassRep.list
+    val ls = schoolClassRep.list
     Ok(Json.obj(
       "data" -> Json.toJson(ls)
     ))
@@ -30,12 +32,14 @@ class SchoolClassController @Inject()(cc: ControllerComponents) extends Abstract
   def create = Action.async { implicit request =>
     forms.SchoolClassForm.schoolClassForm.bindFromRequest.fold(
       errors => {
-        Future { BadRequest(Json.toJson("errors"))}
+        Future {
+          BadRequest(Json.toJson("errors"))
+        }
       },
       tuple => {
         Future {
           val (schoolClasses, action) = tuple
-          val newSchoolClass = SchoolClassRep.create(schoolClasses.head)
+          val newSchoolClass = schoolClassRep.create(schoolClasses.head)
           Ok(Json.obj("status" -> "Ok", "message" -> Json.toJson(newSchoolClass)))
         }
       }
@@ -53,7 +57,7 @@ class SchoolClassController @Inject()(cc: ControllerComponents) extends Abstract
       tuple => {
         Future {
           val (schoolClasses, action) = tuple
-          schoolClasses.foreach(SchoolClassRep.update(_))
+          schoolClasses.foreach(schoolClassRep.update(_))
           Ok(Json.obj("status" -> "Ok", "message" -> Json.toJson("Hello")))
         }
       }

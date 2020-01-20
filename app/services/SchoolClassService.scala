@@ -3,13 +3,16 @@ package services
 import java.io.{File, FileInputStream, FileNotFoundException, IOException}
 import java.util.concurrent.atomic.AtomicInteger
 
+import dal.SchoolClassRep
 import javax.inject._
 import models.SchoolClass
 import org.apache.poi.ss.usermodel.{Cell, CellType, Row, Sheet, Workbook}
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 @Singleton
-class SchoolClassService {
+class SchoolClassService @Inject() (
+                                     schoolClassRep: SchoolClassRep,
+                                   ) {
 
   def importExcelFile(fileName: String) = {
     try {
@@ -33,8 +36,7 @@ class SchoolClassService {
           currentRow.getCell(7).getDateCellValue,
           currentRow.getCell(8).getBooleanCellValue
         )
-        System.out.println(schoolClass)
-
+        schoolClassRep.create(schoolClass)
       }
     } catch {
       case e: FileNotFoundException => e.printStackTrace()

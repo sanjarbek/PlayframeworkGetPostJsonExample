@@ -4,13 +4,8 @@ import java.nio.file.Paths
 import java.util.UUID
 
 import javax.inject._
-import models.SchoolClass
-import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 import services.SchoolClassService
-
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -18,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
  */
 @Singleton
 class HomeController @Inject()(cc: ControllerComponents,
-                              schoolClassService: SchoolClassService,
+                               schoolClassService: SchoolClassService,
                               ) extends AbstractController(cc) {
 
   /**
@@ -39,7 +34,7 @@ class HomeController @Inject()(cc: ControllerComponents,
     request.body
       .file("file")
       .map { excelFile =>
-        val filename    = Paths.get(excelFile.filename).getFileName
+        val filename = Paths.get(excelFile.filename).getFileName
         val uuid = UUID.randomUUID().toString
         val tempDir = System.getProperty("java.io.tmpdir")
         val filePath = s"${tempDir}/${uuid}-${filename}"
