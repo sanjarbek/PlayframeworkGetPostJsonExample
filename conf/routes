@@ -1,5 +1,8 @@
 
 GET         /                          controllers.HomeController.index
+GET         /data-export               controllers.HomeController.getExcelImportForm
+POST        /data-export               controllers.HomeController.handleExcelImportForm
+
 GET         /api/school-classes        controllers.SchoolClassController.index
 POST        /api/school-classes        controllers.SchoolClassController.create
 PUT         /api/school-classes        controllers.SchoolClassController.update
