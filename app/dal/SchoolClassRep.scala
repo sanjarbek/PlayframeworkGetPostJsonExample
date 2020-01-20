@@ -19,7 +19,8 @@ class SchoolClassRep @Inject() (db: Database) {
     SchoolClass(4, 1, "D", "EN", true, 1, "hello 4", new Date(), false),
   )
 
-  val schoolClassParser = Macro.namedParser[SchoolClass]
+  val schoolClassParser = Macro.parser[SchoolClass]("id", "grade", "name", "workbook_language",
+    "is_operational", "for_school", "ruid", "last_update_time", "is_deleted")
 
   def list = db.withConnection { implicit c =>
     SQL("select * from school_classes").as(schoolClassParser *)
