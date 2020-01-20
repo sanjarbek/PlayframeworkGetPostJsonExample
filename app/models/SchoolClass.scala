@@ -19,6 +19,7 @@ case class SchoolClass(
                       isDeleted: Boolean
                       )
 
+
 object SchoolClass {
   implicit val format = Json.format[SchoolClass]
 
@@ -42,4 +43,5 @@ object SchoolClass {
     (JsPath \ "lastUpdateTime").read[Date] and
     (JsPath \ "isDeleted").read[Boolean]
   )(SchoolClass.apply _ )
+
 }

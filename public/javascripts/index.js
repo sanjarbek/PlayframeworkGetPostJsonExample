@@ -3,9 +3,10 @@ var editor;
 $(document).ready(function() {
     editor = new $.fn.dataTable.Editor( {
         ajax: {
+            display: 'jqueryui',
             create: {
                 type: 'POST',
-                contentType: 'application/json',
+                // contentType: 'application/json',
                 url:  '/api/school-classes',
                 data: function ( d ) {
                     console.log(d);
@@ -20,7 +21,7 @@ $(document).ready(function() {
                 url:  '/api/school-classes',
                 data: function ( d ) {
                     var ls = Object.values(d['data']);
-                    return JSON.stringify( ls );
+                    return ls;
                 },
             },
             remove: {
@@ -31,32 +32,41 @@ $(document).ready(function() {
         table: "#myTable",
         fields: [ {
             label: "Id:",
-            name: "id"
+            name: "id",
+            data: "id",
         }, {
             label: "Grade:",
-            name: "grade"
+            name: "grade",
+            data: "grade",
         }, {
             label: "Name:",
-            name: "name"
+            name: "name",
+            data: "name",
         }, {
             label: "Workbook language:",
-            name: "workbookLanguage"
+            name: "workbookLanguage",
+            data: "workbookLanguage",
         }, {
             label: "Is operational:",
-            name: "isOperational"
+            name: "isOperational",
+            data: "isOperational",
         }, {
             label: "For School:",
-            name: "forSchool"
+            name: "forSchool",
+            data: "forSchool",
         }, {
             label: "Ruid:",
-            name: "ruid"
+            name: "ruid",
+            data: "ruid",
         }, {
             label: "Last update time:",
             name: "lastUpdateTime",
-            type: "datetime"
+            type: "datetime",
+            data: "lastUpdateTime",
         }, {
             label: "Is Deleted:",
-            name: "isDeleted"
+            name: "isDeleted",
+            data: "isDeleted",
         }
         ]
     } );

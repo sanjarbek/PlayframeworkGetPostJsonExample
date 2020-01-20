@@ -5,6 +5,7 @@ import java.util.Date
 import dal.SchoolClassRep
 import javax.inject._
 import models.SchoolClass
+import play.api.Logger
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
 
@@ -26,32 +27,33 @@ class SchoolClassController @Inject()(cc: ControllerComponents) extends Abstract
     ))
   }
 
-  def create = Action.async(BodyParsers.parse.json) { implicit request =>
-    import SchoolClass.customSchoolClassReads
-    val jsonValidation = request.body.validate[SchoolClass]
-    jsonValidation.fold(
+  def create = Action.async { implicit request =>
+    forms.SchoolClassForm.schoolClassForm.bindFromRequest.fold(
       errors => {
-        Future { BadRequest(Json.obj("status" -> "ParseError", "message" -> JsError.toJson(errors)))}
+        Future { BadRequest(Json.toJson("errors"))}
       },
-      schoolClass => {
+      tuple => {
         Future {
-          val newSchoolClass = SchoolClassRep.create(schoolClass)
+          val (schoolClasses, action) = tuple
+          val newSchoolClass = SchoolClassRep.create(schoolClasses.head)
           Ok(Json.obj("status" -> "Ok", "message" -> Json.toJson(newSchoolClass)))
         }
       }
     )
   }
 
-  def update = Action.async(BodyParsers.parse.json) { implicit request =>
-    import SchoolClass.customSchoolClassReads
-    val jsonValidation = request.body.validate[List[SchoolClass]]
-    jsonValidation.fold(
+  def update = Action.async { implicit request =>
+    forms.SchoolClassForm.schoolClassForm.bindFromRequest.fold(
       errors => {
-        Future { BadRequest(Json.obj("status" -> "ParseError", "message" -> JsError.toJson(errors)))}
-      },
-      schoolClassesList => {
         Future {
-          schoolClassesList.foreach(SchoolClassRep.update(_))
+          Logger.logger.info(errors.toString)
+          BadRequest(Json.toJson("errors"))
+        }
+      },
+      tuple => {
+        Future {
+          val (schoolClasses, action) = tuple
+          schoolClasses.foreach(SchoolClassRep.update(_))
           Ok(Json.obj("status" -> "Ok", "message" -> Json.toJson("Hello")))
         }
       }
