@@ -39,14 +39,10 @@ class HomeController @Inject()(cc: ControllerComponents,
     request.body
       .file("file")
       .map { excelFile =>
-        // only get the last part of the filename
-        // otherwise someone can send a path like ../../home/foo/bar.txt to write to other files on the system
         val filename    = Paths.get(excelFile.filename).getFileName
-        val fileSize    = excelFile.fileSize
-        val contentType = excelFile.contentType
-
         val uuid = UUID.randomUUID().toString
-        val filePath = s"/tmp/${uuid}-${filename}"
+        val tempDir = System.getProperty("java.io.tmpdir")
+        val filePath = s"${tempDir}/${uuid}-${filename}"
         excelFile.ref.copyTo(Paths.get(filePath), replace = true)
         schoolClassService.importExcelFile(filePath)
         Ok("File uploaded")
