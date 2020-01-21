@@ -18,6 +18,7 @@ import play.api.data.validation.Constraints._
 //                      lastUpdateTime: Date,
 //                      isDeleted: Boolean
 //                      )
+case class AdditionalInfo(name: String, age: Int)
 
 object SchoolClassForm {
   val schoolClassForm = Form(
@@ -37,5 +38,12 @@ object SchoolClassForm {
       ),
       "action" -> text
     )
+  )
+
+  val uploadAdditionalInfoForm = Form(
+    mapping(
+      "name" -> nonEmptyText,
+      "age" -> number
+    )(AdditionalInfo.apply)(AdditionalInfo.unapply)
   )
 }

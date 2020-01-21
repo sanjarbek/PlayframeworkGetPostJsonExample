@@ -1,8 +1,8 @@
-@*
- * This template takes a single argument, a String containing a
- * message to display.
- *@
-@(message: String)
+@import forms.SchoolClassForm
+@import forms.SchoolClassForm._
+@import forms.AdditionalInfo
+
+@(message: String, additionalInfoForm: Form[AdditionalInfo])(implicit messages: Messages)
 
 @import helper._
 @*
@@ -12,6 +12,9 @@
  *@
 @main("Welcome to Play") {
  @helper.form(action = routes.HomeController.handleExcelImportForm, Symbol("enctype") -> "multipart/form-data") {
+
+  @helper.inputText(additionalInfoForm("name"))
+  @helper.inputText(additionalInfoForm("age"))
 
   <input type="file" name="file">
 
